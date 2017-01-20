@@ -32,7 +32,7 @@
 			<div class="formControls col-xs-2">
 				<div class="check-box">
 					<input type="checkbox" id="onlineShow" name="onlineShow" ng-model="menuCategory.online">
-					<label for="checkbox-6">Show On WebSite</label>
+					<label for="onlineShow">Show On WebSite</label>
 				</div>
 			</div>
 			<div class="formControls col-xs-2">
@@ -59,7 +59,8 @@
 						<tr class="text-c" ng-repeat="menuCategory in menuCategoryList">
 							<td><input type="checkbox" value="" name=""></td>
 							<td> {{menuCategory.sequence}}</td>
-							<td> {{menuCategory.categoryName}}</td>
+							<td> <a href="javascript:;" class="btn btn-link radius"
+								ng-click="menuUnderCategory(menuCategory)">{{menuCategory.categoryName}}</a></td>
 							<td class="onlineShow">{{menuCategory.online}}</td>
 							<td class="f-14 td-manage"><a
 								style="text-decoration: none" class="ml-5"
@@ -89,6 +90,10 @@
         "bLengthChange": false,
         "searching": false
      } );
+	var validform = $("#form-menuCategory").Validform({
+		tiptype:3,
+		beforeSubmit:function(form){ return false;}
+	})
 	var app = angular.module('zsoft', []);
 	angular.module('zsoft').controller('zsoftCtrl', function($scope, $http) {
 		$scope.menuCategory = {};
@@ -96,25 +101,32 @@
 	    
 	    $scope.editMenuCategory = function(menuCategory){
 	    	$scope.menuCategory = menuCategory;
+	    	
+	    }
+	    $scope.menuUnderCategory = function(menuCategory) {
+	    	console.log(menuCategory);
 	    }
 	    $scope.saveMenuCategory = function(){
 	    	console.log("save menuCategory",$scope.menuCategory);
-	    	$http({ // default headerType json/application
-                url:'saveMenuCategory.ewsvc',
-                method: 'POST',            
-                data: $scope.menuCategory
-            }).success(function(data){
-            	if (data.status == 'y') {
-					layer.msg(data.msg, { icon : 1, time : 2000 });
-					//var index = parent.layer.getFrameIndex(window.name);
-					location.reload()
-					//parent.layer.close(index);
-				} else {
-					layer.msg(data.msg, { icon : 5, time : 5000 });
-				}
-            }).error(function(data){
-            	layer.msg('system run ajax error,'+data, { icon : 5, time : 5000 });
-            });
+	    	if(validform.check()) {
+	    		$http({ // default headerType json/application
+	                url:'saveMenuCategory.ewsvc',
+	                method: 'POST',            
+	                data: $scope.menuCategory
+	            }).success(function(data){
+	            	if (data.status == 'y') {
+						layer.msg(data.msg, { icon : 1, time : 2000 });
+						//var index = parent.layer.getFrameIndex(window.name);
+						location.reload()
+						//parent.layer.close(index);
+					} else {
+						layer.msg(data.msg, { icon : 5, time : 5000 });
+					}
+	            }).error(function(data){
+	            	layer.msg('system run ajax error,'+data, { icon : 5, time : 5000 });
+	            });
+	    	}
+	    	
 	    }
 	});
 })();

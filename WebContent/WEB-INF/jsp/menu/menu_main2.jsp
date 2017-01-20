@@ -14,9 +14,9 @@
 <title></title>
 </head>
 <body ng-app="menu" ng-controller="menuCtrl">
-	<nav class="breadcrumb">
+	<nav class="breadcrumb" ng-model="template">
 		<a href="javascript:;"
-			ng-click="menuCategoryButton()";
+			ng-click=""
 			class="btn btn-success radius"> Menu Category</a> <a
 			href="javascript:;" onclick="openWind('Menu','menuList.htm')"
 			class="btn btn-success radius"> Menu </a> <a
@@ -27,7 +27,7 @@
 			href="javascript:location.replace(location.href);" title="Reload"><i
 			class="Hui-iconfont">&#xe68f;</i></a>
 	</nav>
-	<div id="page">
+	<div ng-include="template.url">
 	<table class="table">
 		<tr>
 			<td width="100" class="va-t">
@@ -46,8 +46,8 @@
 				</ul>
 			</td>
 			<td class="va-t"><IFRAME ID="testIframe" Name="testIframe"
-					FRAMEBORDER=0 SCROLLING=AUTO width=100% height=500px
-					ng-src="{{template.url}}"></IFRAME></td>
+					FRAMEBORDER=0 SCROLLING=AUTO width=100% height=500px 
+					SRC="menuItemMain.htm"></IFRAME></td>
 		</tr>
 	</table>
 	</div>
@@ -65,10 +65,12 @@
 		(function(){
 			var app = angular.module('menu', []);
 			angular.module('menu').controller('menuCtrl', function($scope, $http) {
-			    $http.get("fetchMenuCategory.ewsvc").then(function (response) {$scope.menuCategoryList = response.data;});
-			    $scope.template = {url:"menuItemMain.htm"};
-			    $scope.menuCategoryButton = function(){
-			    	$scope.template = {url:"menu_category.jsp"};
+			    //$http.get("fetchMenuCategory.ewsvc").then(function (response) {$scope.menuCategoryList = response.data;});
+			    $scope.temppate = [{ name: 'menuCategory', url: 'menu_category.jsp'},
+			        { name: 'template2.html', url: 'template2.html'}];
+			    $scope.template = $scope.templates[0];
+			    $scope.menuCategoryButton = function() {
+			    	
 			    }
 			});
 		})(jQuery)
