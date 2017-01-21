@@ -13,14 +13,15 @@
 <%@ include file="/WEB-INF/jsp/_meta.jsp"%>
 <title>New Menu</title>
 </head>
-<body>
+<body ng-app="zsoft" ng-controller="zsoftCtrl">
 	<div class="page-container">
 	<form action="saveMenu.htm" method="post" class="form form-horizontal" id="form-menu">
 		<div class="row cl">
 			<label class="form-label col-xs-2">Menu Name：</label>
 			<div class="formControls col-xs-2">
-				<input type="hidden" id="id" name="id" value="0">
-				<input type="text" class="input-text" placeholder="Menu Name" name="menuName" id="menuName" datatype="*3-50" nullmsg="Cannnot empty">
+				<input type="hidden" id="categoryId" name="categoryId" ng-model="menu.categoryId">
+				<input type="text" class="input-text" placeholder="Menu Name" name="menuName" id="menuName" datatype="*3-50"
+					ng-model="menu.menuName">
 			</div>
 			<label class="form-label col-xs-2">Menu Category：</label>
 			<div class="formControls col-xs-2"> <span class="select-box">
@@ -105,26 +106,25 @@
 				class="table table-border table-bordered table-bg table-hover table-sort">
 				<thead>
 					<tr class="text-c">
-						<th width="10"><input type="checkbox" name="" value=""></th>
-						<th>Menu Category</th>
-						<th>Menu Name</th>
-						<th>MinPax</th>
-						<th>Price</th>
-						<th>MultipleDelivery</th>
-						<th>Show On WebSite</th>
-						<th width="120">操作</th>
+						<th width="5%"><input type="checkbox" name="" value=""></th>
+						<th width="30%">Menu Name</th>
+						<th width="20%">Remarks</th>
+						<th width="10%">MinPax</th>
+						<th width="5%">Unit Price</th>
+						<th width="5%">No. Item</th>
+						<th width="5%">Show On WebSite</th>
+						<th width="10%">Action</th>
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach items="${model.list}" var="menu" varStatus="status">
-						<tr class="text-c">
+						<tr class="text-c" ng-repeat="menu in menuList">
 							<td><input type="checkbox" value="" name=""></td>
-							<td> <input type="hidden" id="menuCategoryId" value="${menu.menuCategoryId }">${menu.menuCategoryName }</td>
-							<td class="menuName"> ${menu.menuName }</td>
-							<td class="minPax"> ${menu.minPax }</td>
-							<td class="price"> ${menu.Price }</td>
-							<td class="multipleDelivery"> ${menu.multipleDelivery }</td>
-							<td> <input type="hidden" id="onlineShow" value="${menu.onlineShow }">${menu.onlineShow }</td>
+							<td> {{menu.menuName}}</td>
+							<td> {{menu.remarks}}</td>
+							<td> {{menu.minPax}}</td>
+							<td> {{menu.unitPrice}}</td>
+							<td> {{menu.noItem}}</td>
+							<td> {{menu.online}}</td>
 							<td class="f-14 td-manage"><a
 								style="text-decoration: none" class="ml-5"
 								onClick="menu_edit(this,${menu.id})"
@@ -136,7 +136,6 @@
 								 -->
 							</td>
 						</tr>
-					</c:forEach>
 					
 				</tbody>
 			</table>
@@ -145,6 +144,7 @@
 </body>
 <%@ include file="/WEB-INF/jsp/_footer.jsp"%>
 <script type="text/javascript" src="lib/Validform/5.3.2/Validform.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 <script type="text/javascript">
 $(function(){
 	$('.skin-minimal input').iCheck({
@@ -158,6 +158,43 @@ $(function(){
 		callback:function(form){
 			form[0].submit();
 		}
+	});
+	
+	var app = angular.module('zsoft', []);
+	angular.module('zsoft').controller('zsoftCtrl', function($scope, $http) {
+		console.log(getUrlParam("categoryId"));
+		$scope.menu = {};
+		$scope.menu.categoryId = getUrlParam("categoryId");
+	    $http.get("fetchMenu.ewsvc?param="+$scope.menu.categoryId).then(function (response) {$scope.menuList = response.data;});
+	    
+	    $scope.editMenu = function(menu){
+	    	$scope.menu = menu;
+	    }
+	    $scope.menuItemUnderMenu = function(menu) {
+	    	location.replace("menuItemList.htm?menuId="+menu.menuId);
+	    }
+	    $scope.saveMenu = function(){
+	    	console.log("save menu",$scope.menu);
+	    	if(validform.check()) {
+	    		$http({ // default headerType json/application
+	                url:'saveMenu.ewsvc',
+	                method: 'POST',            
+	                data: $scope.menu
+	            }).success(function(data){
+	            	if (data.status == 'y') {
+						layer.msg(data.msg, { icon : 1, time : 2000 });
+						//var index = parent.layer.getFrameIndex(window.name);
+						location.reload()
+						//parent.layer.close(index);
+					} else {
+						layer.msg(data.msg, { icon : 5, time : 5000 });
+					}
+	            }).error(function(data){
+	            	layer.msg('system run ajax error,'+data, { icon : 5, time : 5000 });
+	            });
+	    	}
+	    	
+	    }
 	});
 });
 /* $('.table-sort').dataTable({

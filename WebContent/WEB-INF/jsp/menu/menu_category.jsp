@@ -95,7 +95,8 @@
 		beforeSubmit:function(form){ return false;}
 	})
 	var app = angular.module('zsoft', []);
-	angular.module('zsoft').controller('zsoftCtrl', function($scope, $http) {
+	angular.module('zsoft').controller('zsoftCtrl', function($scope, $http, $rootScope) {
+		
 		$scope.menuCategory = {};
 	    $http.get("fetchMenuCategory.ewsvc").then(function (response) {$scope.menuCategoryList = response.data;});
 	    
@@ -104,7 +105,7 @@
 	    	
 	    }
 	    $scope.menuUnderCategory = function(menuCategory) {
-	    	console.log(menuCategory);
+	    	location.replace("menuList.htm?categoryId="+menuCategory.categoryId);
 	    }
 	    $scope.saveMenuCategory = function(){
 	    	console.log("save menuCategory",$scope.menuCategory);

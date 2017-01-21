@@ -45,4 +45,9 @@ public class MenuService {
 		
 		return resultMap;
 	}
+	
+	/************************ Menu *********************************/
+	public List loadMenuByCategoryId(String categoryId) {
+		return menuDao.fetchMenuListByCategoryId(categoryId);
+	}
 }

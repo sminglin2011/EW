@@ -70,8 +70,9 @@ public class MenuController {
 	
 	@ResponseBody
 	@RequestMapping(value="/fetchMenu.ewsvc")
-	public Object fetchMenu(ModelMap model, HttpServletResponse res) throws Exception {
-		return com.zsoft.views.JsonView.Render(map, res);
+	public Object fetchMenu(ModelMap model, HttpServletResponse res, String param) throws Exception {
+		List list = menuSvc.loadMenuByCategoryId(param);
+		return com.zsoft.views.JsonView.Render(list, res);
 	}
 	@ResponseBody
 	@RequestMapping(value="/fetchMenuItemGroup.ewsvc")

@@ -15,8 +15,8 @@
 </head>
 <body ng-app="menu" ng-controller="menuCtrl">
 	<nav class="breadcrumb">
-		<a href="javascript:;"
-			ng-click="menuCategoryButton()";
+		<a href="javascript:void(0)"
+			data-href="menuCategoryMain.htm" data-title="Menu Category"
 			class="btn btn-success radius"> Menu Category</a> <a
 			href="javascript:;" onclick="openWind('Menu','menuList.htm')"
 			class="btn btn-success radius"> Menu </a> <a
@@ -64,12 +64,14 @@
 		}
 		(function(){
 			var app = angular.module('menu', []);
-			angular.module('menu').controller('menuCtrl', function($scope, $http) {
+			angular.module('menu').controller('menuCtrl', function($scope, $http, $rootScope) {
 			    $http.get("fetchMenuCategory.ewsvc").then(function (response) {$scope.menuCategoryList = response.data;});
 			    $scope.template = {url:"menuItemMain.htm"};
 			    $scope.menuCategoryButton = function(){
-			    	$scope.template = {url:"menu_category.jsp"};
+			    	//$scope.template = {url:"menuCategoryMain.htm"};
+			    	openWind("Menu Category", "menuCategoryMain.htm");
 			    }
+			    
 			});
 		})(jQuery)
 	</script>
